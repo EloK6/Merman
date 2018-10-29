@@ -5,19 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
  
-  <link rel="stylesheet" href="css/reset.css">
+  <!-- <link rel="stylesheet" href="css/reset.css"> -->
   <link rel="stylesheet" href="css/style.css">
   <title>Amazing Merman</title>
 </head>
 <body>
-  <!-- <div id="title">
-    <img src="./images/merman.png" alt="merman">
-    <h1>The aventure of the amazing merman</h1>
-    <br>
-    <button id="start-button">StartGame</button>
+  <div class="container">
+    <div id="left-container"> 
+      <img class="merman" src="./images/Merman_home.png" alt="Merman">
+    </div>
+    <div id="right-container">
+        <img  class="logo" src="./images/Logo.png" alt="logo">
+        <div id="rules">
+            <h1>CATCH THE STARFISHES</h1>
+            <h1>AVOID THE OCTOPUS,<br>THE URCHINS AND THE HOOKS</h1>
+            <h1>AND DON'T TAKE OUT THE HEAD<br>OF THE WATER</h1>
+        </div>
+        <!-- <button id="start-btn">start</button> -->
+        <a href="#" target="_blank" id="start-btn"><img src="./images/Start.png" alt="start button" class="start-button"></a>
+    </div>
   </div>
-  <div id="game-board"></div> -->
-  <canvas id="canvas" width="1300px" height="700px" style="border:1px solid black"></canvas>
+  <section id="game-board">
+  </section>
+  
+  <!-- <canvas id="canvas" width="1300px" height="700px" style="border:1px solid black"></canvas> -->
 </body>
-<script type="text/javascript" src="script.js"> </script>
+<script type="text/javascript" src="script.js"></script>
 </html>
