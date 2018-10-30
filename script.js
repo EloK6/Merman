@@ -1,19 +1,12 @@
 
-    document.getElementById("start-btn").onclick = function() {
-        document.getElementById("container").style.display = "none"; 
-        document.getElementById("game-board").style.display = "block";
-    };
-
-    var canvas = document.getElementById('canvas');
-    var ctx = canvas.getContext('2d');
-    
+window.onload = function() {
     function drawCanvas() {
-        canvas.width = 1300;
-        canvas.height = 700;
-        document.getElementById("game-board").append(canvas);
+        var canvas = document.getElementById('canvas');
+        ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, 1300, 700);
     }
     drawCanvas();
-
+    
     var score = 0;
 
     //Sky
@@ -93,14 +86,35 @@
     }
     drawSand();
 
-    function drawMerman() {
+    var merman = {
+        x : 100,
+        y : 400,
+        moveUp : function() { this.y -= 5},
+        moveDown : function() { this.y += 5}
+    }
+
+    function draw(merman) {
         var img = new Image();
         img.onload = function() {
             ctx.drawImage(img, 100, 400, 200, 100);
         };
     img.src = "./images/Merman_game.png";
     }
-    drawMerman();
+
+    // document.onkeydown = function(e) {
+    //     switch (e.keyCode) {
+    //         case 38 : merman.moveUp(); break;
+    //         case 40 : merman.moveDown(); break;
+    //     }
+    //     updateCanvas();
+    // }
+
+    // function updateCanvas() {
+    //     ctx.clearRect(0, 0, 1300, 700);
+    //     draw(merman);
+    // }
+
+    // updateCanvas();
 
     function drawScore() {
         var img = new Image();
@@ -133,5 +147,7 @@
         this.height = height;
         this.x = x;
         this.y = y;
+        this.speedX = 0;
+        this.speedY = 0;
     }
-
+};
