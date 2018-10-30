@@ -86,6 +86,19 @@ window.onload = function() {
     }
     drawSand();
 
+    function drawOctopus() {
+        var randomX = Math.floor(Math.random()*(1300)-50);
+        var randomY = Math.floor(Math.random()*(600-200)+150);
+        var img = new Image();
+        img.onload = function() {
+            ctx.drawImage(img, randomX, randomY, 60, 60);
+            ctx.drawImage(img, randomX+50, randomY+50, 60, 60);
+            ctx.drawImage(img, randomX-50, randomY-50, 60, 60);
+        };
+        img.src = "./images/Octopus.png";
+    }
+    drawOctopus();
+
     var merman = {
         x : 100,
         y : 400,
@@ -96,25 +109,30 @@ window.onload = function() {
     function draw(merman) {
         var img = new Image();
         img.onload = function() {
-            ctx.drawImage(img, 100, 400, 200, 100);
+            ctx.drawImage(img, merman.x, merman.y, 200, 100);
         };
     img.src = "./images/Merman_game.png";
     }
 
-    // document.onkeydown = function(e) {
-    //     switch (e.keyCode) {
-    //         case 38 : merman.moveUp(); break;
-    //         case 40 : merman.moveDown(); break;
-    //     }
-    //     updateCanvas();
-    // }
+    document.onkeydown = function(e) {
+        switch (e.keyCode) {
+            case 38 : merman.moveUp(); break;
+            case 40 : merman.moveDown(); break;
+        }
+        updateCanvas();
+    }
 
-    // function updateCanvas() {
-    //     ctx.clearRect(0, 0, 1300, 700);
-    //     draw(merman);
-    // }
+    function updateCanvas() {
+        ctx.clearRect(0, 0, 1300, 700);
+        draw(merman);
+        drawSky();
+        drawCloud();
+        drawSeaForeground();
+        drawSeaBackground();
+        drawSand();
+    }
 
-    // updateCanvas();
+    updateCanvas();
 
     function drawScore() {
         var img = new Image();
@@ -140,14 +158,15 @@ window.onload = function() {
     }
     gameOver();
 
-    function Component(width, height, image, x, y) {
-        this.image = new Image();
-        this.image.src = image;
-        this.width = width;
-        this.height = height;
-        this.x = x;
-        this.y = y;
-        this.speedX = 0;
-        this.speedY = 0;
-    }
+    // function Component(width, height, image, x, y) {
+    //     this.image = new Image();
+    //     this.image.src = image;
+    //     this.width = width;
+    //     this.height = height;
+    //     this.x = x;
+    //     this.y = y;
+    //     this.speedX = 0;
+    //     this.speedY = 0;
+    // }
+
 };
