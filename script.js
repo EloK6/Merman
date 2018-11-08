@@ -1,4 +1,5 @@
-var score = 0;
+var score = 15;
+var obstacles = [];
 
 function drawCanvas() {
   canvas = document.getElementById("canvas");
@@ -122,6 +123,7 @@ var octopus = {
   right: this.x + this.width,
   speedX: -7,
   speedY: 0.1,
+  collisionEffect: false,
 
   move: function() {
     this.x += this.speedX;
@@ -164,6 +166,7 @@ var orshins = {
   y: Math.floor(Math.random() * (600 - 250) + 200),
   speedX: -6,
   speedY: 0.25,
+  collisionEffect: false,
 
   move: function() {
     this.x += this.speedX;
@@ -173,12 +176,12 @@ var orshins = {
       this.y = Math.floor(Math.random() * (600 - 250) + 200);
     }
   },
-
   draw: function() {
     ctx.drawImage(this.imageOrshins, this.x, this.y, 40, 40);
     ctx.drawImage(this.imageOrshins, this.x - 30, this.y - 50, 40, 40);
   }
 };
+
 imageOrshins.src = "./images/Orshin.png";
 
 //-------------Stars---------------//
@@ -212,19 +215,11 @@ var star = {
 };
 imageStars.src = "./images/Star_game.png";
 
-//-------------Obstacles---------------//
-var obstacles = [];
-
-function createObstacles() {
-  obstacles.push("octopus");
-}
-
 //-------------Merman---------------//
 
 var imageMerman = new Image();
 var imageMermanDown = new Image();
 var imageMermanUp = new Image();
-var imageMermanNo = new Image();
 var imageMermanYes = new Image();
 
 imageMerman.onload = updateCanvas;
@@ -246,17 +241,9 @@ var merman = {
   moveDown: function() {
     this.y += this.speedY;
   },
-
   draw: function() {
     ctx.drawImage(this.imageMerman, this.x, this.y, this.width, this.height);
   }
-
-  // collision: function() {
-  //   if (this.right >= obstacles.left) {
-  //     // imageMerman.src = imageMermanNo.src;
-  //     score += 1;
-  //   }
-  // }
 };
 
 document.onkeydown = function(e) {
@@ -278,8 +265,34 @@ document.onkeydown = function(e) {
 imageMerman.src = "./images/Merman_DOWN.png";
 imageMermanDown.src = "./images/Merman_DOWN.png";
 imageMermanUp.src = "./images/Merman_UP.png";
-imageMermanNo.src = "./images/Merman_N0.png";
 imageMermanYes.src = "./images/Merman_YES.png";
+
+//-------------Obstacles---------------//
+// var imageMermanNo = new Image();
+
+function collision() {
+  for (var i = 0; i < obstacles.length; i++) {
+    if (obstacles[i].collisionEffect === false) {
+      if (
+        (merman.y <= obstacles[i].y &&
+          merman.y + merman.height >= obstacles[i].y) ||
+        (merman.y >= obstacles[i].y &&
+          merman.y <= obstacles[i].y + obstacles[i].height)
+      ) {
+        if (merman.x + merman.width == obstacles[i].x) {
+          // imageMerman.src = imageMermanNo.src;
+          score -= 1;
+          obstacles[i].collisionEffect = true;
+        }
+      }
+    } else if (obstacles[i].x <= 50) {
+      obstacles.splice(i, 1);
+    } else if (obstacles[i].x === canvas.width) {
+      obstacles[i].collisionEffect = false;
+    }
+  }
+}
+// imageMermanNo.src = "./images/Merman_N0.png";
 
 //-------------Score---------------//
 
@@ -289,11 +302,11 @@ function drawScore() {
     ctx.drawImage(img, 1250, 20, 40, 40);
   };
   img.src = "./images/Star_game.png";
-  ctx.font = "36px Pacifico";
+  ctx.font = "24px wickedMouse";
   ctx.textBaseline = "top";
   ctx.textAlign = "left";
   ctx.fillStyle = "#F4A506";
-  ctx.fillText(score, 1220, 22);
+  ctx.fillText(score, 1200, 22);
 }
 
 //-------------GameOver---------------//
@@ -310,18 +323,19 @@ function gameOver() {
 //-------------Update---------------//
 
 function updateCanvas() {
-  for (var i = 0; i < obstacles.length; i++) {
-    if (merman.right > obstacles[i].left) {
-      imageMerman.src = imageMermanNo.src;
-      score += 1;
-    }
-  }
   // clearCanvas();
   drawScore();
   cloud.draw();
   octopus.draw();
   orshins.draw();
+  obstacles = [octopus, orshins];
   star.draw();
   merman.draw();
+  collision();
+  console.log(score);
   requestAnimationFrame(updateCanvas);
+
+  // console.log(obstacles);
 }
+
+// console.log(orshins.createObstacles());
