@@ -1,5 +1,6 @@
-var score = 15;
+var score = 5;
 var obstacles = [];
+var bonus = [];
 
 function drawCanvas() {
   canvas = document.getElementById("canvas");
@@ -79,7 +80,8 @@ var IntervalId = function() {
   merman.moveUp();
   merman.moveDown();
   star.move();
-  // merman.collision();
+  star2.move();
+  finish.move();
   drawScore();
 };
 
@@ -103,7 +105,7 @@ var cloud = {
   draw: function() {
     ctx.drawImage(this.imageCloud, this.x, 20, 90, 50);
     ctx.drawImage(this.imageCloud, this.x + 550, -50, 150, 100);
-    ctx.drawImage(this.imageCloud, this.x + 1220, -30, 150, 100);
+    ctx.drawImage(this.imageCloud, this.x + 1120, -30, 150, 100);
   }
 };
 imageCloud.src = "./images/Cloud.png";
@@ -195,11 +197,12 @@ var star = {
   y: Math.floor(Math.random() * (600 - 200) + 200),
   speedX: -5,
   speedY: -0.05,
+  collectingEffect: false,
 
   move: function() {
     this.x += this.speedX;
     this.y += this.speedY;
-    if (this.x <= -120 || this.y <= 0) {
+    if (this.x <= -30 || this.y <= 0) {
       this.x = canvas.width;
       this.y = Math.floor(Math.random() * (600 - 200) + 200);
     }
@@ -207,20 +210,59 @@ var star = {
 
   draw: function() {
     ctx.drawImage(this.imageStars, this.x, this.y, 40, 40);
-    ctx.drawImage(this.imageStars, this.x + 30, this.y + 30, 40, 40);
-    ctx.drawImage(this.imageStars, this.x + 60, this.y + 60, 40, 40);
-    ctx.drawImage(this.imageStars, this.x + 90, this.y + 90, 40, 40);
-    ctx.drawImage(this.imageStars, this.x + 120, this.y + 120, 40, 40);
+    ctx.drawImage(this.imageStars, this.x - 30, this.y - 30, 40, 40);
+  }
+};
+
+var star2 = {
+  imageStars: imageStars,
+  x: canvas.width,
+  y: Math.floor(Math.random() * (600 - 200) + 200),
+  speedX: -6,
+  speedY: -0.05,
+  collectingEffect: false,
+
+  move: function() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    if (this.x <= -30 || this.y <= 0) {
+      this.x = canvas.width;
+      this.y = Math.floor(Math.random() * (600 - 200) + 200);
+    }
+  },
+
+  draw: function() {
+    ctx.drawImage(this.imageStars, this.x - 60, this.y, 40, 40);
+    ctx.drawImage(this.imageStars, this.x - 90, this.y - 30, 40, 40);
   }
 };
 imageStars.src = "./images/Star_game.png";
+
+//-------------Finish Line---------------//
+
+var imageFinish = new Image();
+imageFinish.onload = updateCanvas;
+
+var finish = {
+  imageFinish: imageFinish,
+  x: 500,
+  speedX: -1,
+
+  move: function() {
+    this.x += this.speedX;
+  },
+
+  draw: function() {
+    ctx.drawImage(this.imageFinish, this.x, 600, 100, 100);
+  }
+};
+imageFinish.src = ".images/Finish.png";
 
 //-------------Merman---------------//
 
 var imageMerman = new Image();
 var imageMermanDown = new Image();
 var imageMermanUp = new Image();
-var imageMermanYes = new Image();
 
 imageMerman.onload = updateCanvas;
 
@@ -234,12 +276,16 @@ var merman = {
   right: this.x + this.width,
   speedX: 0,
   speedY: 8,
+  gravity: 0.005,
+  gravitySpeed: 0,
 
   moveUp: function() {
+    this.gravitySpeed += this.gravity;
     this.y -= this.speedY;
   },
   moveDown: function() {
-    this.y += this.speedY;
+    this.gravitySpeed += this.gravity;
+    this.y += this.speedY + this.gravitySpeed;
   },
   draw: function() {
     ctx.drawImage(this.imageMerman, this.x, this.y, this.width, this.height);
@@ -265,10 +311,10 @@ document.onkeydown = function(e) {
 imageMerman.src = "./images/Merman_DOWN.png";
 imageMermanDown.src = "./images/Merman_DOWN.png";
 imageMermanUp.src = "./images/Merman_UP.png";
-imageMermanYes.src = "./images/Merman_YES.png";
 
 //-------------Obstacles---------------//
-// var imageMermanNo = new Image();
+var imageMermanNo = new Image();
+obstacles = [octopus, orshins];
 
 function collision() {
   for (var i = 0; i < obstacles.length; i++) {
@@ -279,21 +325,55 @@ function collision() {
         (merman.y >= obstacles[i].y &&
           merman.y <= obstacles[i].y + obstacles[i].height)
       ) {
-        if (merman.x + merman.width == obstacles[i].x) {
-          // imageMerman.src = imageMermanNo.src;
+        if (
+          obstacles[i].x <= merman.x + merman.width &&
+          obstacles[i].x >= merman.x
+        ) {
+          if (imageMerman.src != imageMermanNo.src) {
+            imageMerman.src = imageMermanNo.src;
+          }
+          imageMerman.src = imageMermanNo.src;
           score -= 1;
           obstacles[i].collisionEffect = true;
         }
       }
     } else if (obstacles[i].x <= 50) {
-      obstacles.splice(i, 1);
-    } else if (obstacles[i].x === canvas.width) {
       obstacles[i].collisionEffect = false;
+      obstacles[i].x = canvas.width;
+      obstacle[i].y = Math.floor(Math.random() * (600 - 250) + 200);
     }
   }
 }
-// imageMermanNo.src = "./images/Merman_N0.png";
+imageMermanNo.src = "./images/Merman_NOpng.png";
 
+//-------------Bonus---------------//
+var imageMerman_YES = new Image();
+bonus = [star, star2];
+
+function fishing() {
+  for (var i = 0; i < bonus.length; i++) {
+    if (bonus[i].collectingEffect === false) {
+      if (
+        (merman.y <= bonus[i].y && merman.y + merman.height >= bonus[i].y) ||
+        (merman.y >= bonus[i].y && merman.y <= bonus[i].y + bonus[i].height)
+      ) {
+        if (bonus[i].x <= merman.x + merman.width && bonus[i].x >= merman.x) {
+          if (imageMerman.src != imageMerman_YES.src) {
+            imageMerman.src = imageMerman_YES.src;
+          }
+          imageMerman.src = imageMerman_YES.src;
+          score += 1;
+          bonus[i].collectingEffect = true;
+        }
+      }
+    } else if (bonus[i].x <= 50) {
+      bonus[i].collectingEffect = false;
+      bonus[i].x = canvas.width;
+      bonus[i].y = Math.floor(Math.random() * (600 - 200) + 200);
+    }
+  }
+}
+imageMerman_YES.src = "./images/Merman_YES.png";
 //-------------Score---------------//
 
 function drawScore() {
@@ -317,7 +397,7 @@ function gameOver() {
   img.onload = function() {
     ctx.drawImage(img, 1250, 20, 40, 40);
   };
-  img.src = "./images/Star_game.png";
+  img.src = "./images/Game_over.png";
 }
 
 //-------------Update---------------//
@@ -328,14 +408,11 @@ function updateCanvas() {
   cloud.draw();
   octopus.draw();
   orshins.draw();
-  obstacles = [octopus, orshins];
   star.draw();
+  star2.draw();
+  // finish.draw();
   merman.draw();
+  fishing();
   collision();
-  console.log(score);
   requestAnimationFrame(updateCanvas);
-
-  // console.log(obstacles);
 }
-
-// console.log(orshins.createObstacles());
