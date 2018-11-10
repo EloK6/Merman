@@ -250,7 +250,7 @@ var finish = {
   y: 550,
   width: 200,
   height: 200,
-  speedX: -5,
+  speedX: -0.5,
 
   move: function() {
     this.x += this.speedX;
@@ -395,7 +395,7 @@ function drawScore() {
 function restart() {
   setTimeout(function() {
     location.reload();
-  }, 2000);
+  }, 5000);
 }
 
 //-------------GameOver---------------//
@@ -403,10 +403,10 @@ var imageGameOver = new Image();
 imageGameOver.src = "./images/Game_over.png";
 function gameOver() {
   clearCanvas();
-  for (var i = 0; i < intervalId2; i++) {
-    clearInterval(i);
-  }
-  reqAnimation.forEach(req => cancelAnimationFrame(req));
+  clearInterval(intervalId1);
+  clearInterval(intervalId2);
+  // reqAnimation.forEach(req => cancelAnimationFrame(req));
+  cancelAnimationFrame(reqAnimation);
   ctx.drawImage(imageGameOver, 300, 100, 700, 420);
   restart();
 }
@@ -417,10 +417,10 @@ imageSuccess.src = "./images/Game_Over2.png";
 function success() {
   console.log("success");
   clearCanvas();
-  for (var i = 0; i < intervalId2; i++) {
-    clearInterval(i);
-  }
-  reqAnimation.forEach(req => cancelAnimationFrame(req));
+  clearInterval(intervalId1);
+  clearInterval(intervalId2);
+  cancelAnimationFrame(reqAnimation);
+  // reqAnimation.forEach(req => cancelAnimationFrame(req));
   ctx.drawImage(imageSuccess, 300, 100, 650, 500);
   ctx.font = "48px wickedMouse";
   ctx.textBaseline = "top";
@@ -435,7 +435,7 @@ function success() {
 function updateCanvas() {
   if (
     merman.y + merman.height >= canvas.height ||
-    merman.y <= 150 ||
+    merman.y <= 120 ||
     score < 0
   ) {
     gameOver();
