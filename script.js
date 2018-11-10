@@ -1,7 +1,7 @@
 var score = 0;
 var obstacles = [];
 var bonus = [];
-var reqAnimation;
+var reqAnimation = [];
 
 function drawCanvas() {
   canvas = document.getElementById("canvas");
@@ -250,7 +250,7 @@ var finish = {
   y: 550,
   width: 200,
   height: 200,
-  speedX: -0.5,
+  speedX: -5,
 
   move: function() {
     this.x += this.speedX;
@@ -375,6 +375,7 @@ function fishing() {
   }
 }
 imageMerman_YES.src = "./images/Merman_YES.png";
+
 //-------------Score---------------//
 
 function drawScore() {
@@ -390,31 +391,43 @@ function drawScore() {
   ctx.fillText(score, 1200, 22);
 }
 
+//-------------Restart---------------//
+function restart() {
+  setTimeout(function() {
+    location.reload();
+  }, 2000);
+}
+
 //-------------GameOver---------------//
 var imageGameOver = new Image();
 imageGameOver.src = "./images/Game_over.png";
 function gameOver() {
   clearCanvas();
-  clearInterval(intervalId1);
-  clearInterval(intervalId2);
-  cancelAnimationFrame(reqAnimation);
-  ctx.drawImage(imageGameOver, 300, 100, 800, 500);
+  for (var i = 0; i < intervalId2; i++) {
+    clearInterval(i);
+  }
+  reqAnimation.forEach(req => cancelAnimationFrame(req));
+  ctx.drawImage(imageGameOver, 300, 100, 700, 420);
+  restart();
 }
 
 //-------------Success---------------//
 var imageSuccess = new Image();
 imageSuccess.src = "./images/Game_Over2.png";
 function success() {
+  console.log("success");
   clearCanvas();
-  clearInterval(intervalId1);
-  clearInterval(intervalId2);
-  cancelAnimationFrame(reqAnimation);
+  for (var i = 0; i < intervalId2; i++) {
+    clearInterval(i);
+  }
+  reqAnimation.forEach(req => cancelAnimationFrame(req));
   ctx.drawImage(imageSuccess, 300, 100, 650, 500);
   ctx.font = "48px wickedMouse";
   ctx.textBaseline = "top";
   ctx.textAlign = "left";
   ctx.fillStyle = "#F4A506";
   ctx.fillText(score, 520, 285);
+  restart();
 }
 
 //-------------Update---------------//
@@ -439,6 +452,6 @@ function updateCanvas() {
     merman.draw();
     fishing();
     collision();
-    reqAnimation = requestAnimationFrame(updateCanvas);
+    reqAnimation.push(requestAnimationFrame(updateCanvas));
   }
 }
