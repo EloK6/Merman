@@ -246,15 +246,18 @@ imageFinish.onload = updateCanvas;
 
 var finish = {
   imageFinish: imageFinish,
-  x: 1200,
-  speedX: -0.2,
+  x: 1300,
+  y: 550,
+  width: 200,
+  height: 200,
+  speedX: -0.5,
 
   move: function() {
     this.x += this.speedX;
   },
 
   draw: function() {
-    ctx.drawImage(this.imageFinish, this.x, 550, 200, 200);
+    ctx.drawImage(this.imageFinish, this.x, this.y, this.width, this.height);
   }
 };
 imageFinish.src = "./images/Finish.png";
@@ -391,24 +394,41 @@ function drawScore() {
 var imageGameOver = new Image();
 imageGameOver.src = "./images/Game_over.png";
 function gameOver() {
-  // merman.y = 150;
   clearCanvas();
   clearInterval(intervalId1);
   clearInterval(intervalId2);
   cancelAnimationFrame(reqAnimation);
-  // obstacles = [];
-  // bonus = [];
   ctx.drawImage(imageGameOver, 300, 100, 800, 500);
-  // ctx.drawImage(img, 0, 0, 1300, 700);
+}
+
+//-------------Success---------------//
+var imageSuccess = new Image();
+imageSuccess.src = "./images/Game_Over2.png";
+function success() {
+  clearCanvas();
+  clearInterval(intervalId1);
+  clearInterval(intervalId2);
+  cancelAnimationFrame(reqAnimation);
+  ctx.drawImage(imageSuccess, 300, 100, 650, 500);
+  ctx.font = "48px wickedMouse";
+  ctx.textBaseline = "top";
+  ctx.textAlign = "left";
+  ctx.fillStyle = "#F4A506";
+  ctx.fillText(score, 520, 285);
 }
 
 //-------------Update---------------//
 
 function updateCanvas() {
-  if (merman.y >= canvas.height || merman.y <= 150 || score < 0) {
+  if (
+    merman.y + merman.height >= canvas.height ||
+    merman.y <= 150 ||
+    score < 0
+  ) {
     gameOver();
+  } else if (finish.x - 20 === 100) {
+    success();
   } else {
-    // clearCanvas();
     drawScore();
     cloud.draw();
     octopus.draw();
