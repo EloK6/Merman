@@ -1,6 +1,7 @@
-var score = 5;
+var score = 0;
 var obstacles = [];
 var bonus = [];
+var reqAnimation;
 
 function drawCanvas() {
   canvas = document.getElementById("canvas");
@@ -70,7 +71,7 @@ var background = function() {
   ctx.fill();
   ctx.stroke();
 };
-setInterval(background, 30);
+var intervalId1 = setInterval(background, 30);
 
 //-------------SetInterval---------------//
 var IntervalId = function() {
@@ -85,7 +86,7 @@ var IntervalId = function() {
   drawScore();
 };
 
-setInterval(IntervalId, 30);
+var intervalId2 = setInterval(IntervalId, 30);
 
 //-------------Cloud---------------//
 
@@ -245,18 +246,18 @@ imageFinish.onload = updateCanvas;
 
 var finish = {
   imageFinish: imageFinish,
-  x: 500,
-  speedX: -1,
+  x: 1200,
+  speedX: -0.2,
 
   move: function() {
     this.x += this.speedX;
   },
 
   draw: function() {
-    ctx.drawImage(this.imageFinish, this.x, 600, 100, 100);
+    ctx.drawImage(this.imageFinish, this.x, 550, 200, 200);
   }
 };
-imageFinish.src = ".images/Finish.png";
+imageFinish.src = "./images/Finish.png";
 
 //-------------Merman---------------//
 
@@ -272,15 +273,12 @@ var merman = {
   y: 400,
   width: 250,
   height: 180,
-  left: this.x,
-  right: this.x + this.width,
   speedX: 0,
-  speedY: 8,
-  gravity: 0.005,
+  speedY: 9,
+  gravity: 0.0025,
   gravitySpeed: 0,
 
   moveUp: function() {
-    this.gravitySpeed += this.gravity;
     this.y -= this.speedY;
   },
   moveDown: function() {
@@ -390,29 +388,37 @@ function drawScore() {
 }
 
 //-------------GameOver---------------//
-
+var imageGameOver = new Image();
+imageGameOver.src = "./images/Game_over.png";
 function gameOver() {
-  clearInterval(idIntervalle);
-  var img = new Image();
-  img.onload = function() {
-    ctx.drawImage(img, 1250, 20, 40, 40);
-  };
-  img.src = "./images/Game_over.png";
+  // merman.y = 150;
+  clearCanvas();
+  clearInterval(intervalId1);
+  clearInterval(intervalId2);
+  cancelAnimationFrame(reqAnimation);
+  // obstacles = [];
+  // bonus = [];
+  ctx.drawImage(imageGameOver, 300, 100, 800, 500);
+  // ctx.drawImage(img, 0, 0, 1300, 700);
 }
 
 //-------------Update---------------//
 
 function updateCanvas() {
-  // clearCanvas();
-  drawScore();
-  cloud.draw();
-  octopus.draw();
-  orshins.draw();
-  star.draw();
-  star2.draw();
-  // finish.draw();
-  merman.draw();
-  fishing();
-  collision();
-  requestAnimationFrame(updateCanvas);
+  if (merman.y >= canvas.height || merman.y <= 150 || score < 0) {
+    gameOver();
+  } else {
+    // clearCanvas();
+    drawScore();
+    cloud.draw();
+    octopus.draw();
+    orshins.draw();
+    star.draw();
+    star2.draw();
+    finish.draw();
+    merman.draw();
+    fishing();
+    collision();
+    reqAnimation = requestAnimationFrame(updateCanvas);
+  }
 }
